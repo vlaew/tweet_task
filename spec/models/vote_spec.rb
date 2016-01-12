@@ -57,5 +57,21 @@ describe Vote, type: :model do
         expect(@vote.errors[:tweet].any?).to eq(true)
       end
     end
+
+    context 'when vote with such user and tweet exists' do
+      before do
+        create(:vote, user: @user, tweet: @tweet)
+        @vote = build(:vote, user: @user, tweet: @tweet)
+        @vote.valid?
+      end
+
+      it 'should be invalid' do
+        expect(@vote.valid?).to eq(false)
+      end
+
+      it 'should contain error for tweet' do
+        expect(@vote.errors[:tweet].any?).to eq(true)
+      end
+    end
   end
 end

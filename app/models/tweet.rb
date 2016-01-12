@@ -4,4 +4,8 @@ class Tweet < ActiveRecord::Base
 
   validates :user, :text, presence: true
   validates :text, length: { maximum: 140 }
+
+  def rating
+    votes.count
+  end
 end

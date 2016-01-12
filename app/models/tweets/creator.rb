@@ -2,7 +2,6 @@ module Tweets
   module Creator
     class CreationResult
       attr_reader :tweet, :success
-      delegate :errors, to: :tweet
 
       def initialize(tweet)
         @tweet = tweet
