@@ -30,4 +30,22 @@ describe User, type: :model do
       expect(@user.errors[:name].size).to eq(1)
     end
   end
+
+  context 'when new user has name which belongs to an existing user' do
+    let(:name) { 'John Smith' }
+
+    before do
+      create(:user, name: name)
+      @user = build(:user, name: name)
+      @user.valid?
+    end
+
+    it 'should be invalid' do
+      expect(@user.valid?).to eq(false)
+    end
+
+    it 'should contain error for name' do
+      expect(@user.errors[:name].size).to eq(1)
+    end
+  end
 end

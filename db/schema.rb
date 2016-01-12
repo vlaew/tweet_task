@@ -11,10 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160112195048) do
+ActiveRecord::Schema.define(version: 20160112211705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "tweets", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.text     "text"
+    t.datetime "created_at", null: false
+  end
+
+  add_index "tweets", ["user_id"], name: "index_tweets_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
@@ -22,4 +30,5 @@ ActiveRecord::Schema.define(version: 20160112195048) do
 
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
 
+  add_foreign_key "tweets", "users", on_delete: :cascade
 end
