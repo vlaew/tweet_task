@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160112211705) do
+ActiveRecord::Schema.define(version: 20160112214804) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,5 +30,16 @@ ActiveRecord::Schema.define(version: 20160112211705) do
 
   add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
 
+  create_table "votes", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "tweet_id",   null: false
+    t.datetime "created_at", null: false
+  end
+
+  add_index "votes", ["tweet_id"], name: "index_votes_on_tweet_id", using: :btree
+  add_index "votes", ["user_id"], name: "index_votes_on_user_id", using: :btree
+
   add_foreign_key "tweets", "users", on_delete: :cascade
+  add_foreign_key "votes", "tweets", on_delete: :cascade
+  add_foreign_key "votes", "users", on_delete: :cascade
 end
