@@ -22,6 +22,14 @@ module Tweets
            .limit(top)
     end
 
+    def self.top_rating_users(period:, top: 5)
+      tweets_join = Tweet.in_period(period_to_range(period))
+                         .with_average_rating_by_user
+      User.joins("LEFT JOIN (#{tweets_join.to_sql}) as user_tweets ON user_tweets.user_id = users.id ")
+        .order('COALESCE(average_rating, 0) DESC')
+        .limit(top)
+    end
+
     private
 
     def self.period_to_range(period)

@@ -177,4 +177,76 @@ describe Tweets::Statistic, type: :model do
       end
     end
   end
+
+  describe '#top_rating_users' do
+    before do
+      @creators = create_list(:user, 5)
+    end
+
+    context 'for today' do
+      before do
+        [3, 3, 2].each { |rating| create(:tweet_with_votes, user: @creators[0], created_at: today, rating: rating) }
+        [5, 1, 3].each { |rating| create(:tweet_with_votes, user: @creators[1], created_at: today, rating: rating) }
+        [7, 6].each { |rating| create(:tweet_with_votes, user: @creators[2], created_at: today, rating: rating) }
+
+        @expected_users = @creators.take(3)
+        [1, 1, 2, 2, 2, 3].each { |rating| create(:tweet_with_votes, user: @creators[3], created_at: today, rating: rating) }
+        [2, 2, 2, 2, 2, 3].each { |rating| create(:tweet_with_votes, user: @creators[4], created_at: today, rating: rating) }
+      end
+
+      it 'should return 3 top users' do
+        expect(Tweets::Statistic.top_rating_users(period: :today, top: 3).size).to eq(3)
+      end
+
+      it 'should return expected users' do
+        ids = Tweets::Statistic.top_rating_users(period: :today, top: 3).pluck(:id).sort
+        expected_ids = @expected_users.map(&:id).sort
+        expect(ids).to eq(expected_ids)
+      end
+    end
+
+    context 'for week' do
+      before do
+        [3, 3, 2].each { |rating| create(:tweet_with_votes, user: @creators[0], created_at: week_range.to_a.sample, rating: rating) }
+        [5, 1, 3].each { |rating| create(:tweet_with_votes, user: @creators[1], created_at: week_range.to_a.sample, rating: rating) }
+        [7, 6].each { |rating| create(:tweet_with_votes, user: @creators[2], created_at: week_range.to_a.sample, rating: rating) }
+
+        @expected_users = @creators.take(3)
+        [1, 1, 2, 2, 2, 3].each { |rating| create(:tweet_with_votes, user: @creators[3], created_at: week_range.to_a.sample, rating: rating) }
+        [6, 7, 8, 8, 9].each { |rating| create(:tweet_with_votes, user: @creators[4], created_at: today - 2.weeks, rating: rating) }
+      end
+
+      it 'should return 3 top users' do
+        expect(Tweets::Statistic.top_rating_users(period: :week, top: 3).size).to eq(3)
+      end
+
+      it 'should return expected users' do
+        ids = Tweets::Statistic.top_rating_users(period: :week, top: 3).pluck(:id).sort
+        expected_ids = @expected_users.map(&:id).sort
+        expect(ids).to eq(expected_ids)
+      end
+    end
+
+    context 'for all time' do
+      before do
+        [3, 3, 2].each { |rating| create(:tweet_with_votes, user: @creators[0], created_at: week_range.to_a.sample, rating: rating) }
+        [5, 2, 3].each { |rating| create(:tweet_with_votes, user: @creators[1], created_at: week_range.to_a.sample, rating: rating) }
+        [7, 6].each { |rating| create(:tweet_with_votes, user: @creators[2], created_at: week_range.to_a.sample, rating: rating) }
+        [1, 1, 2, 2, 2, 3].each { |rating| create(:tweet_with_votes, user: @creators[3], created_at: week_range.to_a.sample, rating: rating) }
+        [6, 7, 8, 8, 9].each { |rating| create(:tweet_with_votes, user: @creators[4], created_at: today - 2.weeks, rating: rating) }
+
+        @expected_users = [ @creators[2], @creators[1], @creators[4] ]
+      end
+
+      it 'should return 3 top users' do
+        expect(Tweets::Statistic.top_rating_users(period: :all_time, top: 3).size).to eq(3)
+      end
+
+      it 'should return expected users' do
+        ids = Tweets::Statistic.top_rating_users(period: :all_time, top: 3).pluck(:id).sort
+        expected_ids = @expected_users.map(&:id).sort
+        expect(ids).to eq(expected_ids)
+      end
+    end
+  end
 end
