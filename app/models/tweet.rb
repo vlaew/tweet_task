@@ -5,7 +5,10 @@ class Tweet < ActiveRecord::Base
   validates :user, :text, presence: true
   validates :text, length: { maximum: 140 }
 
+  scope :in_period, ->(range) { range.is_a?(Range) ? where(created_at: range) : where(nil) }
+  scope :with_count_by_user, -> { select('user_id, COUNT(*) as total_tweets').group(:user_id) }
+
   def rating
-    votes.count
+    votes.size
   end
 end
