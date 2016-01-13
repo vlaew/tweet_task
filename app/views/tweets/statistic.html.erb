@@ -1,0 +1,63 @@
+<div>
+  <h1>Statistic</h1>
+</div>
+
+<%= link_to 'Today', statistic_tweets_path(period: :today) %>
+<%= link_to 'Week', statistic_tweets_path(period: :week) %>
+<%= link_to 'All time', statistic_tweets_path(period: :all_time) %>
+
+<h2>Top users</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Tweets</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @top_users.each do |user| %>
+    <tr>
+      <td><%= user.name %></td>
+      <td><%= user.tweets.size %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h2>Top tweets</h2>
+<table>
+  <thead>
+  <tr>
+    <th>User</th>
+    <th>Text</th>
+    <th>Rating</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @top_tweets.each do |tweet| %>
+    <tr>
+      <td><%= tweet.user.name %></td>
+      <td><%= tweet.text %></td>
+      <td><%= tweet.rating %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h2>Top rating users</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Average rating</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @top_rating_users.each do |user| %>
+    <tr>
+      <td><%= user.name %></td>
+      <td><%= user.average_rating %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

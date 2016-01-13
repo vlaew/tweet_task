@@ -1,0 +1,6 @@
+<%= form_for(@tweet) do |f| %>
+  <%= f.collection_select :user_id, User.all, :id, :name, prompt: true %>
+  <%= f.text_area :text %>
+
+  <%= f.submit %>
+<% end %>

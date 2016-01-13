@@ -3,5 +3,6 @@ Rails.application.routes.draw do
 
   resources :tweets, only: [:index, :new, :create] do
     post 'vote', on: :member
+    get 'statistic', on: :collection
   end
 end
