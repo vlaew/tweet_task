@@ -1,8 +1,8 @@
 module Tweets
   module Statistic
     PERIOD_RANGE = {
-      today: -> { Range.new(Time.zone.today, Time.zone.today) },
-      week: -> { Range.new(1.week.ago(Time.zone.today), Time.zone.today) },
+      today: -> { Range.new(Time.zone.today.to_datetime, (Time.zone.today + 1.day).to_datetime, true) },
+      week: -> { Range.new(1.week.ago(Time.zone.today.to_datetime), (Time.zone.today + 1.day).to_datetime, true) },
       all_time: -> { nil },
       default: -> { nil }
     }
@@ -13,6 +13,13 @@ module Tweets
       User.joins("LEFT JOIN (#{tweets_join.to_sql}) as user_tweets ON user_tweets.user_id = users.id ")
           .order('COALESCE(total_tweets, 0) DESC')
           .limit(top)
+    end
+
+    def self.top_tweets(period:, top: 5)
+      Tweet.in_period(period_to_range(period))
+           .includes(:user)
+           .order(votes_count: :desc)
+           .limit(top)
     end
 
     private
