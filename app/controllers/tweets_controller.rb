@@ -1,9 +1,9 @@
 class TweetsController < ApplicationController
   def index
     @tweets = Tweet.includes(:user)
-                .order(created_at: :desc)
-                .order(id: :desc)
-                .page(params.fetch(:page, 1)).per(10)
+              .order(created_at: :desc)
+              .order(id: :desc)
+              .page(params.fetch(:page, 1)).per(10)
   end
 
   def new
@@ -11,7 +11,10 @@ class TweetsController < ApplicationController
   end
 
   def create
-    result = Tweets::Creator.create(user: User.find_by(id: tweet_params[:user_id]), text: tweet_params[:text])
+    result = Tweets::Creator.create(
+      user: User.find_by(id: tweet_params[:user_id]),
+      text: tweet_params[:text]
+    )
     if result.success
       redirect_to tweets_path
     else
