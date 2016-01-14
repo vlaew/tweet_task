@@ -11,9 +11,11 @@ describe Tweets::Voter, type: :model do
   describe '#vote' do
     context 'when called with valid params' do
       it 'should increase rating of the tweet by 1' do
-        expect {
-          voter.vote(user: @user, tweet: @tweet)
-        }.to change{ @tweet.rating }.by(1)
+        rating_before = @tweet.rating
+        voter.vote(user: @user, tweet: @tweet)
+        @tweet.reload
+        rating_after = @tweet.rating
+        expect(rating_after - rating_before).to eq(1)
       end
 
       describe 'returned result object' do
